@@ -36,3 +36,22 @@ validate x
          | value `mod` 10 == 0 = True
          | otherwise           = False
          where value = sumDigits $ doubleEveryOtherR $ toDigits x
+
+-- ex5
+-- Given the number of discs and names for the three pegs, hanoi
+-- should return a list of moves to be performed to move the stack of
+-- discs from the first peg to the second.
+type Peg = String
+type Move = (Peg, Peg)
+hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
+hanoi 0 _ _ _ = []
+hanoi 1 x _ z = [(x, z)]
+hanoi n x y z = (hanoi (n-1) x z y) ++ [(x, z)] ++ [(y, z)]
+
+-- ex6
+hanoi4 :: Integer -> Peg -> Peg -> Peg -> Peg -> [Move]
+hanoi4 0 _ _ _ _ = []
+hanoi4 1 x _ _ z = [(x, z)]
+hanoi4 2 x y _ z = [(x, y), (y, z)]
+hanoi4 3 x y y' z = [(x, y), (x, y'), (x, z), (y', z), (y, z)]
+hanoi4 n x y y' z = (hanoi4 (n-1) x z y' y) ++ [(x, z)] ++ [(y, z)]
