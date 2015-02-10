@@ -35,12 +35,53 @@ getRightTree (Node _ _ rightTree) = rightTree
 getLogMessage :: MessageTree -> LogMessage
 getLogMessage (Node _ logMessage _) = logMessage
 
+-- Give all elements in original tree a mark: '
 insert :: LogMessage -> MessageTree -> MessageTree
-insert logMessage msgTree
-       | msgTree == Leaf = Node Leaf logMessage Leaf
-       | getTimeStamp logMessage < getTimeStamp logMessage' = Node (insert logMessage leftTree) logMessage rightTree
-       | getTimeStamp logMessage > getTimeStamp logMessage' = Node leftTree logMessage (insert logMessage rightTree)
-       | otherwise  = error "error happened!"
-       where leftTree = getLeftTree msgTree
-             rightTree = getRightTree msgTree
-             logMessage' = getLogMessage msgTree
+insert logMessage msgTree'
+       | msgTree' == Leaf = Node Leaf logMessage Leaf
+       | msgTimeStamp < msgTimeStamp' = Node (insert logMessage leftTree') logMessage' rightTree'
+       | msgTimeStamp > msgTimeStamp' = Node leftTree' logMessage' (insert logMessage rightTree')
+       | otherwise  = error "the given logMessage's timestamp exist!"
+       where leftTree' = getLeftTree msgTree'
+             rightTree' = getRightTree msgTree'
+             logMessage' = getLogMessage msgTree'
+             msgTimeStamp = getTimeStamp logMessage
+             msgTimeStamp' = getTimeStamp logMessage'
+
+-- Ex3
+build :: [LogMessage] -> MessageTree
+build = foldr (\x acc -> insert x acc) Leaf
+
+-- Ex4
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node leftTree logMessage rightTree)
+        = (inOrder leftTree) ++ [logMessage] ++ (inOrder rightTree)
+
+-- Ex5
+isErrorMsg :: LogMessage -> Bool
+isErrorMsg (LogMessage (Error _) _ _) = True
+isErrorMsg _ = False
+
+-- whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong = map getMsg . 
+              filter (\(LogMessage (Error x) _ _) -> if x >= 50 then True else False ) . 
+              filter isErrorMsg . 
+              inOrder . 
+              build
+              where getMsg (LogMessage (Error _) _ msg) = msg
+
+
+-- test
+logMsgs = [parseMessage "I 562 this is the first info message!"
+          ,parseMessage "W 001 this is the first warning message!"
+          ,parseMessage "E 2 312 this is the first error message!"]
+infoMsg1 = parseMessage "I 562 this is the first info message!"
+warnMsg1 = parseMessage "W 001 this is the first warning message!"
+errMsg1 = parseMessage "E 2 312 this is the first error message!"
+
+t1 = insert infoMsg1 Leaf
+t2 = insert warnMsg1 t1
+t3 = insert errMsg1 t2
+
+main = testWhatWentWrong parse whatWentWrong "sample.log"
