@@ -17,11 +17,12 @@ localMaxima (x:y:z:xs) = [y | x<y, z<y] ++ localMaxima (y:z:xs)
 
 -- ex3
 histogram :: [Integer] -> String
-histogram x = concat $ L.intersperse "\n" $ line x
-  where line x =  L.reverse $ L.transpose $ pair x
-        pair x = map (\n -> show n ++ fill x !! n) [0..9]
-        fill x = map (\n -> replicate n '*' ++ replicate ((maximum $ occur x) - n) ' ') $ occur x
-        occur x = map (\n -> length $ filter (==n) x ) [0..9]
+histogram x = concat $ L.intersperse "\n" $ L.reverse $ L.transpose $ 
+              zipWith (++) (map show [0..9]) 
+              (map (\n -> replicate n '*' ++ replicate (m - n) ' ') occur)
+  where occur = map (\n -> length $ filter (==n) x ) [0..9]
+        m = maximum occur
+
                 
 vshow x = putStrLn $ histogram x
 
