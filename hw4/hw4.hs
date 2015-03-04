@@ -24,7 +24,7 @@ data Tree a = Leaf
             | Node Integer (Tree a) a (Tree a)
      deriving (Show, Eq)
 
--- foldTree :: [a] -> Tree a
+foldTree :: [a] -> Tree a
 foldTree = foldr addNode Leaf 
          where addNode a Leaf = Node 1 Leaf a Leaf
                addNode a (Node n leftTree b rightTree) 
@@ -32,6 +32,24 @@ foldTree = foldr addNode Leaf
                          | otherwise = (Node n leftTree b (addNode a rightTree))
                          where depth Leaf = 0
                                depth (Node n _ _ _) = n
-        
+
+-- ex3
+xor :: [Bool] -> Bool
+xor = foldl f False 
+    where f False True = True
+          f True True = False
+          f a False = a
+
+map' :: (a->b) -> [a] -> [b]
+map' f = foldr (\a acc -> f a : acc) []
+
+myFoldl :: (a->b->a) -> a -> [b] -> a
+myFoldl f base xs = foldr f' base xs
+        where f' a b = f b a
+
+-- sieveSundaram :: Integer -> [Integer]
+sieveSundaram n = let excludeList = [i+j+2*i*j | i<-[1..n], j<-[1..n], i+j+2*i*j<=n] in
+      2:[2*x+1 | x<-[1..n], not (x `elem` excludeList)]
+
 -- test
 -- foldTree "ABCDEFGHIJ"
