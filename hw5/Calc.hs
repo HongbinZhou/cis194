@@ -65,10 +65,8 @@ instance Expr Program where
          add a b = a ++ b ++ [StackVM.Add]
          mul a b = a ++ b ++ [StackVM.Mul]
 
--- compile :: String -> Maybe Program
--- This can work now: 
-test = (mul (add (lit 1) (lit 2)) (lit 2)) :: Program
--- compile = parseExp StackVM.IVal StackVM.Add StackVM.Mul 
+compile :: String -> Maybe Program
+compile x = (parseExp lit add mul x) :: Maybe Program
 
 -- test
 -- (2+3) * 4
