@@ -6,6 +6,7 @@ module Calc where
 import ExprT
 import Parser
 import StackVM
+import qualified Data.Map as M
 
 -- ex1
 eval :: ExprT -> Integer
@@ -67,6 +68,33 @@ instance Expr Program where
 
 compile :: String -> Maybe Program
 compile x = (parseExp lit add mul x) :: Maybe Program
+
+-- ex6
+class HasVars a where
+      var :: String -> a
+
+data VarExprT = VLit Integer
+              | VMul VarExprT VarExprT
+              | VAdd VarExprT VarExprT
+              | VVar String
+     deriving (Show)
+
+instance HasVars VarExprT where
+         var x = VVar x
+
+instance Expr VarExprT  where
+         lit a = VLit a
+         mul x y = VMul x y
+         add x y = VAdd x y
+
+-- ???? ex6 not done yet ????
+
+-- instance HasVars (M.Map String Integer -> Maybe Integer) where
+--          var x = M.lookup x
+
+-- instance Expr (M.Map String Integer -> Maybe Integer)
+--          lit x = Just x
+--          mul x y = Just (M.lookup x)
 
 -- test
 -- (2+3) * 4
