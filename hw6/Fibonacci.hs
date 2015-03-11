@@ -76,8 +76,28 @@ instance Num (Stream Integer) where
 instance Fractional (Stream Integer) where
          (/) a@(Cons a0 a') b@(Cons b0 b') = Cons x y
              where divByb0 x = floor (fromIntegral x / fromIntegral b0::Double)
-                   x =  divByb0 a0
+                   x = divByb0 a0
                    y = streamMap divByb0 (a' - (a/b) * b')
 
+-- amazing!
 fibs4 :: Stream Integer
-fibs4 = x / (1 - x - x * x) --- Holy crap this is awesome
+fibs4 = x / (1 - x - x * x)
+
+-- ex7
+data Matrix = Matrix Integer Integer Integer Integer
+     deriving (Show)
+
+instance Num Matrix where
+         (*) (Matrix a00 a01 a10 a11) (Matrix b00 b01 b10 b11) = 
+             Matrix c00 c01 c10 c11
+                    where c00 = a00 * b00 + a01 * b10
+                          c01 = a00 * b01 + a01 * b11
+                          c10 = a10 * b00 + a11 * b10
+                          c11 = a10 * b01 + a11 * b11
+
+fibs5 :: Integer -> Integer 
+fibs5 0 = 0
+fibs5 n = getF (m^n)
+  where getF (Matrix x _ _ _) = x
+        m = Matrix 1 1 1 0
+      
