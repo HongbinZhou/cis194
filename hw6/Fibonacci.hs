@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 module Fibonacci where
 
 import Numeric
@@ -61,3 +62,19 @@ tailZero n = toInteger $ length leadingZero
 ruler :: Stream Integer
 ruler = streamMap tailZero nats
 
+-- ex6
+x :: Stream Integer
+x = Cons 0 (Cons 1 (streamRepeat 0))
+
+instance Num (Stream Integer) where
+         fromInteger n = Cons n (streamRepeat 0)
+         negate = streamMap (*(-1)) 
+         (+) (Cons x xs) (Cons y ys) = Cons (x+y) (xs + ys)
+         (*) a@(Cons a0 a') b@(Cons b0 b') = Cons (a0*b0) ((fromInteger a0)*b' + a'*b)
+
+-- ??? can't do int/int??? Only can: floor ((fromInteger a) / (from Integer b))
+instance Fractional (Stream Integer) where
+         (/) a@(Cons a0 a') b@(Cons b0 b') = Cons x y
+             where intDiv p q = floor (fromIntegral a0/ fromIntegral b0::Double)
+                   x = intDiv a0 b0 
+                   y = (fromIntegral (intDiv 1 b0)) * (a' - (a/b) * b')
