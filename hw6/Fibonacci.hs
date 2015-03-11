@@ -75,6 +75,9 @@ instance Num (Stream Integer) where
 -- ??? can't do int/int??? Only can: floor ((fromInteger a) / (from Integer b))
 instance Fractional (Stream Integer) where
          (/) a@(Cons a0 a') b@(Cons b0 b') = Cons x y
-             where intDiv p q = floor (fromIntegral a0/ fromIntegral b0::Double)
-                   x = intDiv a0 b0 
-                   y = (fromIntegral (intDiv 1 b0)) * (a' - (a/b) * b')
+             where divByb0 x = floor (fromIntegral x / fromIntegral b0::Double)
+                   x =  divByb0 a0
+                   y = streamMap divByb0 (a' - (a/b) * b')
+
+fibs4 :: Stream Integer
+fibs4 = x / (1 - x - x * x) --- Holy crap this is awesome
