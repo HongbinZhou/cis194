@@ -17,3 +17,8 @@ fibs2 n = (x+y):xs
              y = head $ tail xs
 
 fibs2' = map fibs2 [0..]
+
+fibs3 :: [Integer]
+fibs3 = 0:1: next fibs3
+        where next (a:t@(b:_)) = (a+b): next t
+
