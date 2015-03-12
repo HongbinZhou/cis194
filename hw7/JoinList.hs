@@ -23,13 +23,26 @@ tag (Append m _ _) = m
 -- tag (Append (Sum 1) Empty Empty)
 
 -- ex2
+-- indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
+indexJ _ Empty = Nothing
+indexJ n (Single _ a)
+       | n == 0 = Just a
+       | otherwise = Nothing
+indexJ n (Append m left right)
+       | n < 0 || n >= rootSize = Nothing
+       | n >= leftSize = indexJ (n - leftSize) right
+       | n < leftSize = indexJ n left
+         where rootSize = getSize m
+               leftSize = getSize (tag left)
+-- test indexJ
+test_indexJ = map (\x -> indexJ x lj) [0..5]
 
 -- test data: (((0,1) (2,3)),4)
-lj0 = (Single (Size 0) "lj0")
+lj0 = (Single (Size 1) "lj0")
 lj1 = (Single (Size 1) "lj1")
-lj2 = (Single (Size 2) "lj2")
-lj3 = (Single (Size 3) "lj3")
-lj4 = (Single (Size 4) "lj4")
+lj2 = (Single (Size 1) "lj2")
+lj3 = (Single (Size 1) "lj3")
+lj4 = (Single (Size 1) "lj4")
 lj = ((lj0 +++ lj1) +++ (lj2 +++ lj3)) +++ lj4
 
 -- ex2 helper functions
