@@ -23,7 +23,7 @@ tag (Append m _ _) = m
 -- tag (Append (Sum 1) Empty Empty)
 
 -- ex2
--- indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
+indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
 indexJ _ Empty = Nothing
 indexJ n (Single _ a)
        | n == 0 = Just a
@@ -32,8 +32,8 @@ indexJ n (Append m left right)
        | n < 0 || n >= rootSize = Nothing
        | n >= leftSize = indexJ (n - leftSize) right
        | n < leftSize = indexJ n left
-         where rootSize = getSize m
-               leftSize = getSize (tag left)
+         where rootSize = getSize $ size m
+               leftSize = getSize $ size (tag left)
 -- test indexJ
 test_indexJ = (map (\x -> indexJ x lj) [0..5]) == (map ((jlToList lj) !!?) [0..5])
 
@@ -57,7 +57,7 @@ jlToList Empty = []
 jlToList (Single _ a) = [a]
 jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 
--- dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 dropJ _ Empty = Empty
 dropJ n l@(Single _ b)
       | n <= 0 = l
@@ -66,7 +66,7 @@ dropJ n (Append m left right)
       | n < 0 || n >= rootSize = Empty
       | n >= leftSize = dropJ (n - leftSize) right
       | n < leftSize = (dropJ n left) +++ right      
-          where rootSize = getSize m
-                leftSize = getSize (tag left)
+          where rootSize = getSize $ size m
+                leftSize = getSize $ size (tag left)
 
 test_dropJ = (jlToList (dropJ 2 lj) ) == (drop 2 (jlToList lj))
