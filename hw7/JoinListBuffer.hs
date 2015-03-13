@@ -10,10 +10,9 @@ import JoinList
 instance Buffer (JoinList (Score, Size) String) where
          toString Empty = []
          toString (Single _ a) = a
-         toString (Append _ left right) = toString left ++ toString right
+         toString (Append _ left right) = toString left ++ "\n" ++ toString right
 
-         fromString [] = Empty
-         fromString s = Single (scoreString s, Size 1) s
+         fromString s = foldr (\x acc -> Single (scoreString x, Size 1) x +++ acc) Empty (lines s)
 
          line = indexJ
 
