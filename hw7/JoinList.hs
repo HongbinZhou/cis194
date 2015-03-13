@@ -70,3 +70,18 @@ dropJ n (Append m left right)
                 leftSize = getSize $ size (tag left)
 
 test_dropJ = (jlToList (dropJ 2 lj) ) == (drop 2 (jlToList lj))
+
+takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+takeJ _ Empty = Empty
+takeJ n l@(Single _ _)
+      | n>=1 = l
+      | otherwise = Empty
+takeJ n l@(Append m left right)      
+      | n <= 0 = Empty
+      | n >= rootSize  = l
+      | n >= leftSize = left +++ takeJ (n-leftSize) right
+      | n < leftSize = takeJ n left
+          where rootSize = getSize $ size m
+                leftSize = getSize $ size $ tag left
+
+test_takeJ = (jlToList (takeJ 3 lj)) == (take 3 (jlToList lj))
