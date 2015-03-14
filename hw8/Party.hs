@@ -2,6 +2,7 @@ module Party where
 
 import Employee
 import Data.Monoid
+import Data.Tree
 
 -- ex1
 glCons :: Employee -> GuestList -> GuestList
@@ -29,3 +30,11 @@ moreFun :: GuestList -> GuestList -> GuestList
 moreFun gl0@(GL _ f0) gl1@(GL _ f1)
         | f0 > f1 = gl0
         | otherwise = gl1
+
+treeFold ::  (a -> b -> b) -> b -> Tree a -> b
+treeFold f b (Node a nodes) = 
+         foldr (\x acc -> treeFold f acc x) (f a b) nodes
+
+n = Node 2 [(Node 0 []), (Node 1 [])]
+
+main = treeFold (+) 1 n
