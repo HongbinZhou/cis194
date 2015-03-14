@@ -3,6 +3,7 @@ module Party where
 import Employee
 import Data.Monoid
 import Data.Tree
+import System.IO
 
 -- ex1
 glCons :: Employee -> GuestList -> GuestList
@@ -38,7 +39,7 @@ treeFold f b (Node a nodes) =
 
 n = Node 2 [(Node 0 []), (Node 1 [])]
 
-main = treeFold (+) 1 n
+-- main = treeFold (+) 1 n
 
 -- ex3
 nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
@@ -51,3 +52,13 @@ nextLevel boss l = (withBoss, withoutBoss)
 maxFun :: Tree Employee -> GuestList
 maxFun t = moreFun withBoss withoutBoss
        where [(withBoss, withoutBoss)] = treeFold (\x acc -> [nextLevel x acc]) mempty t
+-- ex5
+showGL (GL l f) = "Total fun is " ++ show f  ++ "\n" ++ listName
+       where listName = foldr (\a acc -> empName a ++ "\n" ++ acc) "" l
+
+main :: IO ()
+main = do
+     company <- readFile "company.txt"
+     putStr $ showGL $ maxFun (read company)
+     
+     
