@@ -46,3 +46,8 @@ nextLevel boss l = (withBoss, withoutBoss)
           where withBoss = glCons boss mempty
                 withoutBoss = foldr f mempty l
                             where f (_, b) acc = moreFun acc (glCons boss b)
+
+-- ex4
+maxFun :: Tree Employee -> GuestList
+maxFun t = moreFun withBoss withoutBoss
+       where [(withBoss, withoutBoss)] = treeFold (\x acc -> [nextLevel x acc]) mempty t
