@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs #-}
 {- CIS 194 HW 10
    due Monday, 1 April
 -}
@@ -59,3 +60,9 @@ posInt = Parser f
 ------------------------------------------------------------
 first :: (a -> b) -> (a, c) -> (b, c)
 first f (a, c) = (f a, c)
+
+instance Functor Parser where
+         fmap f (Parser h) = Parser g
+              where g x = first f <$> h x
+                    --  Note: first f <$> Nothing = Nothing
+                    --        first f <$> Maybe (a, xs) = Maybe (f a, xs)
