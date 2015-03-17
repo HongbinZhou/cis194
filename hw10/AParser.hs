@@ -1,4 +1,3 @@
-{-# LANGUAGE InstanceSigs #-}
 {- CIS 194 HW 10
    due Monday, 1 April
 -}
@@ -70,20 +69,24 @@ instance Functor Parser where
                     --        first f <$> Maybe (a, xs) = Maybe (f a, xs)
 
 -- ex2
-firstMaybe :: Maybe (a -> b, s) -> Maybe (a, s) -> Maybe (b, s)
-firstMaybe (Just (f, s)) (Just (a, _)) = Just (f a, s)
-firstMaybe _ Nothing = Nothing
-firstMaybe Nothing _ = Nothing
-
 instance Applicative Parser where
 
          pure a = Parser f
               where f _ = Just (a, "")
 
          (Parser f) <*> (Parser h) = Parser g
-                 where g x = firstMaybe (f x) (h x)
+                 where g x = haha (f x) h          -- can't use: f x == Nothing, because not Eq a. 
+                                                   -- Use pattern match instead.
+                       haha Nothing _ = Nothing
+                       haha (Just (f', x')) h = hehe f' (h x')
+                            where hehe f' Nothing = Nothing
+                                  hehe f' (Just (a, x'')) = Just (f' a, x'')
+-- ex3
+abParser :: Parser (Char, Char)
+abParser = (,) <$> (char 'a') <*> (char 'b')
 
-                        -- | f x == Nothing = Nothing
-			-- | h x == Nothing = Nothing
-			-- | f x == Just (f', s) && 
-			--   h x == Just (a, sa)      = Just (f' a, s)
+abParser_ :: Parser()
+abParser_ = (\a b -> ()) <$> (char 'a') <*> (char 'b')
+
+intPair :: Parser [Integer]
+intPair = (\a b c -> [a,c]) <$> posInt <*> char ' ' <*> posInt
