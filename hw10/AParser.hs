@@ -90,3 +90,13 @@ abParser_ = (\a b -> ()) <$> (char 'a') <*> (char 'b')
 
 intPair :: Parser [Integer]
 intPair = (\a b c -> [a,c]) <$> posInt <*> char ' ' <*> posInt
+
+-- ex4
+instance Alternative Parser where
+
+         empty  = Parser (\x -> Nothing)
+
+         (Parser f) <|> (Parser h) =  Parser g
+                        where g x = haha (f x) h
+                                where haha Nothing h = h x
+                                      haha a _ = a
