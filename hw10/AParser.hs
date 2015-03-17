@@ -58,6 +58,8 @@ posInt = Parser f
 ------------------------------------------------------------
 -- Your code goes below here
 ------------------------------------------------------------
+
+-- ex1
 first :: (a -> b) -> (a, c) -> (b, c)
 first f (a, c) = (f a, c)
 
@@ -66,3 +68,22 @@ instance Functor Parser where
               where g x = first f <$> h x
                     --  Note: first f <$> Nothing = Nothing
                     --        first f <$> Maybe (a, xs) = Maybe (f a, xs)
+
+-- ex2
+firstMaybe :: Maybe (a -> b, s) -> Maybe (a, s) -> Maybe (b, s)
+firstMaybe (Just (f, s)) (Just (a, _)) = Just (f a, s)
+firstMaybe _ Nothing = Nothing
+firstMaybe Nothing _ = Nothing
+
+instance Applicative Parser where
+
+         pure a = Parser f
+              where f _ = Just (a, "")
+
+         (Parser f) <*> (Parser h) = Parser g
+                 where g x = firstMaybe (f x) (h x)
+
+                        -- | f x == Nothing = Nothing
+			-- | h x == Nothing = Nothing
+			-- | f x == Just (f', s) && 
+			--   h x == Just (a, sa)      = Just (f' a, s)
