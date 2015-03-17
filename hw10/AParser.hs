@@ -100,3 +100,9 @@ instance Alternative Parser where
                         where g x = haha (f x) h
                                 where haha Nothing h = h x
                                       haha a _ = a
+
+-- ex5
+intOrUppercase :: Parser()
+intOrUppercase = intParser <|> upperParser
+               where intParser = (\a->()) <$> posInt
+                     upperParser = (\a->()) <$> (satisfy isUpper)
