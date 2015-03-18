@@ -56,8 +56,11 @@ parseAtom = spaces *> (N <$> posInt) <* spaces <|>
 openPar = char '('
 closePar = char ')'
 
-parseSExpr = A <$> parseAtom <|>
-             (\x -> Comb [x]) <$> parseSExpr
+f = (\x -> Comb [A x]) <$> parseAtom
+f' = openPar *> oneOrMore f <* closePar
+-- parseSExpr' = (\x -> Comb [A x]) <$> (openPar *> oneOrMore parseAtom  <* closePar)
 
-parseSExpr' = openPar *> zeroOrMore parseSExpr  <* closePar
+parseSExpr = A <$> parseAtom <|>
+           (\x -> Comb [x]) <$> (openPar *> parseSExpr  <* closePar)
+
 
