@@ -11,11 +11,14 @@ import Control.Applicative
 --  1. Parsing repetitions
 ------------------------------------------------------------
 
+-- Not my own version :(
+-- copied from: http://stackoverflow.com/questions/16006279/how-do-you-chain-an-arbitrarily-long-series-of-atomic-parsers-using-applicatives
 zeroOrMore :: Parser a -> Parser [a]
-zeroOrMore p = undefined
+-- zeroOrMore p = (:) <$> p <*> zeroOrMore p <|> pure []
+zeroOrMore p = oneOrMore p <|> pure []
 
 oneOrMore :: Parser a -> Parser [a]
-oneOrMore p = undefined
+oneOrMore p  = (:) <$> p <*> zeroOrMore p
 
 ------------------------------------------------------------
 --  2. Utilities
