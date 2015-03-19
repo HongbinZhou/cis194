@@ -26,3 +26,5 @@ die = getRandom
 type Army = Int
 
 data Battlefield = Battlefield { attackers :: Army, defenders :: Army }
+
+-- I have no idea how to check the random result???????
