@@ -49,18 +49,15 @@ data SExpr = A Atom
            | Comb [SExpr]
   deriving Show
 
--- parseSExpr :: Parser SExpr
+parseAtom :: Parser Atom
 parseAtom = spaces *> (N <$> posInt) <* spaces <|> 
             spaces *> (I <$> ident)  <* spaces
 
-openPar = char '('
-closePar = char ')'
-
-f = (\x -> Comb [A x]) <$> parseAtom
-f' = openPar *> oneOrMore f <* closePar
--- parseSExpr' = (\x -> Comb [A x]) <$> (openPar *> oneOrMore parseAtom  <* closePar)
-
-parseSExpr = A <$> parseAtom <|>
-           (\x -> Comb [x]) <$> (openPar *> parseSExpr  <* closePar)
+parseSExpr :: Parser SExpr
+parseSExpr = A <$> parseAtom
+           <|> Comb <$>
+               (spaces *> char '('
+               *> (oneOrMore parseSExpr)
+               <* spaces <* char ')')
 
 
